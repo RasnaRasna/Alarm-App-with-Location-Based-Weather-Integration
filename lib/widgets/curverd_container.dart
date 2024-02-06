@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'date_picker.dart';
 
 class CurvedBorderContainer extends StatefulWidget {
+  final bool isNewAlarm;
+
+  const CurvedBorderContainer({super.key, required this.isNewAlarm});
   @override
   _CurvedBorderContainerState createState() => _CurvedBorderContainerState();
 }
@@ -13,8 +16,11 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
       List.generate(7, (index) => false); // To track selected days
   String label = "";
   Color selectedColor = Colors.blue;
+
   @override
   Widget build(BuildContext context) {
+    String title = widget.isNewAlarm ? "Set New Alarm" : "Edit Alarm";
+
     return Container(
       height: 400,
       decoration: const BoxDecoration(
@@ -28,7 +34,7 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Set New Alarm",
+                  title,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,

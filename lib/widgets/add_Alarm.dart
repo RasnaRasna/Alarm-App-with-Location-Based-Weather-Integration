@@ -17,7 +17,7 @@ class _AddHabitState extends State<AddAlarm> {
     return Scaffold(
       body: Column(
         children: [
-          CurvedBorderContainer(),
+          CurvedBorderContainer(isNewAlarm: true),
           SizedBox(
             height: 20,
           ),
@@ -45,7 +45,23 @@ class _AddHabitState extends State<AddAlarm> {
                 ),
               ),
             ],
-          )
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+              onPressed: () {},
+              child: Text(
+                "Save",
+                style: TextStyle(
+                    color: Color.fromARGB(
+                      255,
+                      8,
+                      35,
+                      56,
+                    ),
+                    fontSize: 20),
+              ))
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:alarm_weather_app/widgets/days.dart';
+import 'package:alarm_weather_app/widgets/edit_alarm.dart';
 import 'package:flutter/material.dart';
 
 class AlarmList extends StatelessWidget {
@@ -12,7 +13,10 @@ class AlarmList extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Card(
           child: GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (ctx) => EditAlarm()));
+            },
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -48,7 +52,14 @@ class AlarmList extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Positioned(top: 80, left: 20, child: DaysContainer()),
+                  Positioned(
+                    top: 80,
+                    left: 20,
+                    child: Days(
+                      // You can customize the days as needed
+                      days: [true, true, true, true, true, true, false],
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 5,

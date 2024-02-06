@@ -1,33 +1,39 @@
 import 'package:flutter/material.dart';
 
-Widget DaysContainer() {
-  String _getDaySymbol(int index) {
-    final List<String> symbols = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    return symbols[index];
+class Days extends StatelessWidget {
+  final List<bool> days;
+
+  Days({required this.days});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        _buildDay('M', days[0]),
+        _buildDay('T', days[1]),
+        _buildDay('W', days[2]),
+        _buildDay('T', days[3]),
+        _buildDay('F', days[4]),
+        _buildDay('S', days[5]),
+        _buildDay('S', days[6]),
+      ],
+    );
   }
 
-  return GestureDetector(
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 3),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.red,
-          border: Border.all(width: 1),
-          borderRadius: BorderRadius.circular(5),
-        ),
-        width: 20,
-        height: 22,
-        child: Center(
-          child: Text(
-            _getDaySymbol(1),
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+  Widget _buildDay(String day, bool isSelected) {
+    return Container(
+      margin: const EdgeInsets.only(right: 5),
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.blue : Colors.grey,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Text(
+        day,
+        style: TextStyle(
+          color: isSelected ? Colors.white : Colors.black,
         ),
       ),
-    ),
-  );
+    );
+  }
 }
