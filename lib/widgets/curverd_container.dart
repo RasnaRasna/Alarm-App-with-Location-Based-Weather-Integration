@@ -1,6 +1,6 @@
 // Import necessary packages and files
 import 'package:flutter/material.dart';
-import 'date_picker.dart'; // Assuming you have a file for the AlarmTime widget
+import 'date_picker.dart';
 
 class CurvedBorderContainer extends StatefulWidget {
   @override
@@ -11,7 +11,8 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
   TimeOfDay? selectedTime;
   List<bool> selectedDays =
       List.generate(7, (index) => false); // To track selected days
-
+  String label = "";
+  Color selectedColor = Colors.blue;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,8 +22,8 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
       ),
       child: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 35, horizontal: 10),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 40, horizontal: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -33,10 +34,15 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                     fontSize: 20,
                   ),
                 ),
-                Icon(
-                  Icons.cancel,
-                  size: 30,
-                  color: Colors.white,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(
+                    Icons.cancel,
+                    size: 30,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -59,11 +65,11 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                     ),
                     child: Column(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 13,
                         ),
                         Card(
-                          color: Color.fromARGB(255, 199, 224, 246),
+                          color: const Color.fromARGB(255, 199, 224, 246),
                           elevation: 20,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(60)),
@@ -79,13 +85,13 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                                 child: selectedTime != null
                                     ? Text(
                                         "${selectedTime!.format(context)}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 25,
                                         ),
                                       )
-                                    : Text(
+                                    : const Text(
                                         "Tap to set time",
                                         style: TextStyle(
                                           color: Colors.black,
@@ -96,7 +102,7 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         // Display days of the week
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -115,13 +121,13 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
                                   color: selectedDays[index]
-                                      ? Color.fromARGB(255, 8, 35, 56)
+                                      ? const Color.fromARGB(255, 8, 35, 56)
                                       : Colors.grey,
                                 ),
                                 child: Center(
                                   child: Text(
                                     getDayName(index),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.white,
                                     ),
                                   ),
@@ -129,6 +135,34 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                               ),
                             ),
                           ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 20,
+                            ),
+                            GestureDetector(
+                              child: const Icon(Icons.edit),
+                              onTap: () {
+                                _showLabelInputDialog(context);
+                              },
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              label.isNotEmpty
+                                  ? " $label"
+                                  : "Tap the icon to add a label",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -139,6 +173,48 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showLabelInputDialog(BuildContext context) {
+    TextEditingController labelController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Enter Label"),
+          content: TextField(
+            controller: labelController,
+            decoration: const InputDecoration(labelText: "Label"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text("Cancel",
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 8, 35, 56),
+                  )),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  label = labelController.text; // Save the label
+                });
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text(
+                "Save",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 8, 35, 56),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

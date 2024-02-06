@@ -1,4 +1,4 @@
-import 'package:alarm_weather_app/widgets/add_habits.dart';
+import 'package:alarm_weather_app/widgets/add_Alarm.dart';
 import 'package:alarm_weather_app/widgets/alarm_list.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +16,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -42,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (ctx) => AddHabit()));
+              context, MaterialPageRoute(builder: (ctx) => AddAlarm()));
         },
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
