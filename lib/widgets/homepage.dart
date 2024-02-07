@@ -18,7 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(),
       body: WatchBoxBuilder(
-        box: Hive.box('alarms'),
+        box: Hive.box<Alarm>('alarms'),
         builder: (context, box) {
           return ListView.builder(
             itemCount: box.length,
@@ -32,7 +32,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          
           Navigator.push(
             context,
             MaterialPageRoute(builder: (ctx) => AddAlarm()),

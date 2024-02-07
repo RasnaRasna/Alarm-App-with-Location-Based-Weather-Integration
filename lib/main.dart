@@ -10,7 +10,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Hive.registerAdapter(AlarmAdapter());
   await Hive.initFlutter();
-  await Hive.openBox('alarms'); // Open a Hive box for storing alarms
+  await Hive.openBox<Alarm>('alarms'); // Open a Hive box for storing alarms
 
   runApp(const MyApp());
 }

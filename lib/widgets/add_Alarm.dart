@@ -133,7 +133,7 @@ class _AddHabitState extends State<AddAlarm> {
   }
 
   void saveAlarm() async {
-    final alarmBox = await Hive.openBox('alarms');
+    final Box<Alarm> alarmBox = Hive.box<Alarm>('alarms');
     final newAlarm = Alarm(
       label: labelController.text, // Use the label from the controller
       time: DateTime.now(),

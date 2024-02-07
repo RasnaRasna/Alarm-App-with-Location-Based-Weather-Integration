@@ -18,6 +18,8 @@ class _EditAlarmState extends State<EditAlarm> {
   TextEditingController labelController = TextEditingController();
   Color selectedColor = Colors.blue;
   // Default color
+  TimeOfDay? selectedTime; // Define selectedTime
+
   @override
   void initState() {
     super.initState();
@@ -84,7 +86,9 @@ class _EditAlarmState extends State<EditAlarm> {
                       56,
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    saveChanges();
+                  },
                   child: const Text(
                     "Save",
                     style: TextStyle(color: Colors.white, fontSize: 20),
@@ -185,5 +189,32 @@ class _EditAlarmState extends State<EditAlarm> {
         );
       },
     );
+  }
+
+  void saveChanges() async {
+    // Update the alarm object with the new values
+    widget.alarm.label = labelController.text;
+    widget.alarm.time = selectedTime != null
+        ? DateTime(
+            widget.alarm.time!.year,
+            widget.alarm.time!.month,
+            widget.alarm.time!.day,
+            selectedTime!.hour,
+            selectedTime!.minute,
+          )
+        : widget.alarm.time; // Update the time if selectedTime is not null
+    widget.alarm.color = selectedColor.value;
+
+    // Get the Hive box
+    final Box<Alarm> alarmBox = Hive.box<Alarm>('alarms');
+
+    // Find the index of the existing object in the box
+    final int existingIndex = alarmBox.values.toList().indexOf(widget.alarm);
+
+    // Put the updated object back into the box
+    await alarmBox.put(existingIndex, widget.alarm);
+
+    // Once saved, you can navigate back to the previous screen
+    Navigator.pop(context); // Navigate back to the previous screen
   }
 }
