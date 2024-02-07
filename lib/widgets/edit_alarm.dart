@@ -114,7 +114,9 @@ class _EditAlarmState extends State<EditAlarm> {
                           ),
                           actions: [
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                deleteAlarm();
+                              },
                               child: const Text(
                                 "Yes",
                                 style: TextStyle(
@@ -189,6 +191,25 @@ class _EditAlarmState extends State<EditAlarm> {
         );
       },
     );
+  }
+
+  void deleteAlarm() async {
+    // Get the Hive box
+    final Box<Alarm> alarmBox = Hive.box<Alarm>('alarms');
+
+    // Find the index of the existing object in the box
+    final int existingIndex = alarmBox.values.toList().indexOf(widget.alarm);
+
+    // Delete the alarm from the box
+    await alarmBox.deleteAt(existingIndex);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              MyHomePage()), // Provide the builder for MyHomePage
+      (route) => false,
+    );
+    // Once deleted, you can navigate back to the previous screen or perform any other action
   }
 
   void saveChanges() async {
