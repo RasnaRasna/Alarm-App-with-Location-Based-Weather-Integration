@@ -88,9 +88,12 @@ class _AddHabitState extends State<AddAlarm> {
                 onPressed: () {
                   saveAlarm();
 
-                  Navigator.pushReplacement(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => MyHomePage()),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MyHomePage()), // Provide the builder for MyHomePage
+                    (route) => false,
                   );
                 },
                 child: Text(

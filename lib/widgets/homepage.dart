@@ -21,7 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
         box: Hive.box<Alarm>('alarms'),
         builder: (context, box) {
           if (box.isEmpty) {
-            return Center(
+            return const Center(
               child: Text('No alarms available'),
             );
           }

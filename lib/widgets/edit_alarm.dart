@@ -264,7 +264,6 @@ class _EditAlarmState extends State<EditAlarm> {
           )
         : widget.alarm.time; // Update the time if selectedTime is not null
     widget.alarm.color = selectedColor.value;
-    widget.alarm.selectedDays = widget.alarm.selectedDays;
 
     // Get the Hive box
     final Box<Alarm> alarmBox = Hive.box<Alarm>('alarms');
