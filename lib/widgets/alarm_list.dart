@@ -6,13 +6,17 @@ import 'package:intl/intl.dart';
 
 class AlarmList extends StatelessWidget {
   final Alarm alarm;
+  final TimeOfDay? selectedTime; // Add selectedTime parameter
 
-  const AlarmList({super.key, required this.alarm});
+  const AlarmList({super.key, required this.alarm, this.selectedTime});
 
   @override
   Widget build(BuildContext context) {
-    final formattedTime =
-        DateFormat('hh:mm a').format(alarm.time ?? DateTime.now());
+    final formattedTime = selectedTime != null
+        ? selectedTime!.format(context)
+        : DateFormat('hh:mm a').format(alarm.time ?? DateTime.now());
+    print('time in AlarmList: $selectedTime');
+
     return SizedBox(
         height: 125,
         child: Padding(
