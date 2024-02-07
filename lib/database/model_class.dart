@@ -18,7 +18,7 @@ class Alarm {
   Alarm({
     this.label,
     this.time,
-    required this.color,
+     required this.color,
   });
   Color get alarmColor => Color(color);
 

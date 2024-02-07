@@ -5,27 +5,56 @@ import 'date_picker.dart';
 class CurvedBorderContainer extends StatefulWidget {
   final bool isNewAlarm;
   final TextEditingController labelController;
+  final TimeOfDay? initialTime;
+  final String initialLabel;
+  final Color initialColor;
 
-  const CurvedBorderContainer(
-      {super.key, required this.isNewAlarm, required this.labelController});
+  const CurvedBorderContainer({
+    Key? key,
+    required this.isNewAlarm,
+    required this.labelController,
+    required this.initialTime,
+    required this.initialLabel,
+    required this.initialColor,
+  }) : super(key: key);
+
   @override
   _CurvedBorderContainerState createState() => _CurvedBorderContainerState();
 }
 
 class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
   TextEditingController labelController = TextEditingController();
-
   TimeOfDay? selectedTime;
-  List<bool> selectedDays =
-      List.generate(7, (index) => false); // To track selected days
   String label = "";
   Color selectedColor = Colors.blue;
+  List<bool> selectedDays =
+      List.generate(7, (index) => false); // Initialize with default values
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize values based on whether it's a new or edit alarm
+    if (widget.isNewAlarm) {
+      // For a new alarm, use the provided initial values
+      selectedTime = widget.initialTime;
+      label = widget.initialLabel;
+      selectedColor = widget.initialColor;
+    }
+    // For editing an alarm, the values will be set later in the build method
+  }
 
   @override
   Widget build(BuildContext context) {
     String title = widget.isNewAlarm ? "Set New Alarm" : "Edit Alarm";
-    print('Label in curverdcontainer: ${labelController.text}');
 
+    // Initialize values for editing an alarm in the build method
+    if (!widget.isNewAlarm) {
+      selectedTime ??= widget.initialTime;
+      label = label.isEmpty ? widget.initialLabel : label;
+      selectedColor =
+          selectedColor == Colors.blue ? widget.initialColor : selectedColor;
+      // Set selectedDays based on the provided alarm or provide default values
+    }
     return Container(
       height: 400,
       decoration: const BoxDecoration(

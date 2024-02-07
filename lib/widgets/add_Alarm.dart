@@ -13,7 +13,12 @@ class AddAlarm extends StatefulWidget {
 }
 
 class _AddHabitState extends State<AddAlarm> {
-  Color selectedColor = Colors.blue;
+  Color selectedColor = Color.fromARGB(
+    255,
+    8,
+    35,
+    56,
+  );
   // Default color
   TextEditingController labelController = TextEditingController();
 
@@ -25,7 +30,17 @@ class _AddHabitState extends State<AddAlarm> {
           Column(
             children: [
               CurvedBorderContainer(
-                  isNewAlarm: true, labelController: labelController),
+                  isNewAlarm: true,
+                  labelController: labelController,
+                  initialTime: null, // Provide the initial time if needed
+                  initialLabel: '', // Provide the initial label if needed
+                  initialColor: Color.fromARGB(
+                    255,
+                    8,
+                    35,
+                    56,
+                  ) // Provide the initial color if needed
+                  ),
               SizedBox(
                 height: 20,
               ),
@@ -124,8 +139,14 @@ class _AddHabitState extends State<AddAlarm> {
       time: DateTime.now(),
       color: selectedColor.value,
     );
-    print('Label in addalarm: ${labelController.text}');
 
-    alarmBox.add(newAlarm);
+    print('Label in addalarm: ${labelController.text}');
+    final addedKey =
+        await alarmBox.add(newAlarm); // Retrieve the key after adding
+
+    // Assign the key to the Alarm object
+    newAlarm.key = addedKey;
+
+    print('New Alarm added with key: $addedKey');
   }
 }

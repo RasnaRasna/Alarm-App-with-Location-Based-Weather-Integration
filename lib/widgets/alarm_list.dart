@@ -11,8 +11,7 @@ class AlarmList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Label: ${alarm.label}');
-    print('Label in AlarmList: ${alarm.label}');
+   
 
     final formattedTime =
         DateFormat('hh:mm a').format(alarm.time ?? DateTime.now());
@@ -25,7 +24,11 @@ class AlarmList extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (ctx) => EditAlarm(alarm: alarm,)),
+                    MaterialPageRoute(
+                      builder: (ctx) => EditAlarm(
+                        alarm: alarm,
+                      ),
+                    ),
                   );
                 },
                 child: Container(

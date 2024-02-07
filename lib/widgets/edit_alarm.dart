@@ -19,6 +19,14 @@ class _EditAlarmState extends State<EditAlarm> {
   Color selectedColor = Colors.blue;
   // Default color
   @override
+  void initState() {
+    super.initState();
+    // Initialize the text controller and color with the values from the provided alarm
+    labelController.text = widget.alarm.label ?? '';
+    selectedColor = Color(widget.alarm.color);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -26,20 +34,26 @@ class _EditAlarmState extends State<EditAlarm> {
           CurvedBorderContainer(
             isNewAlarm: false,
             labelController: labelController,
+            initialTime: widget.alarm.time != null
+                ? TimeOfDay.fromDateTime(widget.alarm.time!)
+                : null,
+            initialLabel: widget.alarm.label ?? '', // Provide the initial label
+            initialColor:
+                Color(widget.alarm.color), // Provide the initial color
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
-              Text(
+              const Text(
                 "Pick a Color",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               GestureDetector(
@@ -55,7 +69,7 @@ class _EditAlarmState extends State<EditAlarm> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Row(
@@ -63,7 +77,7 @@ class _EditAlarmState extends State<EditAlarm> {
             children: [
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(
+                    backgroundColor: const Color.fromARGB(
                       255,
                       8,
                       35,
@@ -71,13 +85,13 @@ class _EditAlarmState extends State<EditAlarm> {
                     ),
                   ),
                   onPressed: () {},
-                  child: Text(
+                  child: const Text(
                     "Save",
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   )),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(
+                    backgroundColor: const Color.fromARGB(
                       255,
                       8,
                       35,
@@ -89,22 +103,15 @@ class _EditAlarmState extends State<EditAlarm> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          content: Text(
+                          content: const Text(
                             "Are you sure you want to delete the Alarm?",
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                           actions: [
                             TextButton(
-                              onPressed: () async {
-                               
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MyHomePage()),
-                                );
-                              },
-                              child: Text(
+                              onPressed: () {},
+                              child: const Text(
                                 "Yes",
                                 style: TextStyle(
                                   color: Color.fromARGB(
@@ -121,7 +128,7 @@ class _EditAlarmState extends State<EditAlarm> {
                                 // Handle "No" button action
                                 Navigator.of(context).pop(); // Close the dialog
                               },
-                              child: Text(
+                              child: const Text(
                                 "No",
                                 style: TextStyle(
                                   color: Color.fromARGB(
@@ -138,7 +145,7 @@ class _EditAlarmState extends State<EditAlarm> {
                       },
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     "Delete",
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   )),
@@ -154,7 +161,7 @@ class _EditAlarmState extends State<EditAlarm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pick a Color'),
+          title: const Text('Pick a Color'),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: selectedColor,
@@ -172,13 +179,11 @@ class _EditAlarmState extends State<EditAlarm> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
       },
     );
   }
-
- 
 }
