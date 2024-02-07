@@ -8,6 +8,8 @@ class CurvedBorderContainer extends StatefulWidget {
   final TimeOfDay? initialTime;
   final String initialLabel;
   final Color initialColor;
+  final List<bool> initialSelectedDays; // Add initialSelectedDays parameter
+  final Function(List<bool>) onSelectedDaysChanged; // Add this callback
 
   const CurvedBorderContainer({
     Key? key,
@@ -16,6 +18,8 @@ class CurvedBorderContainer extends StatefulWidget {
     required this.initialTime,
     required this.initialLabel,
     required this.initialColor,
+    required this.initialSelectedDays,
+    required this.onSelectedDaysChanged,
   }) : super(key: key);
 
   @override
@@ -27,12 +31,13 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
   TimeOfDay? selectedTime;
   String label = "";
   Color selectedColor = Colors.blue;
-  List<bool> selectedDays =
-      List.generate(7, (index) => false); // Initialize with default values
+  late List<bool> selectedDays; // Declare selectedDays list
 
   @override
   void initState() {
     super.initState();
+    selectedDays = List.from(widget.initialSelectedDays);
+
     // Initialize values based on whether it's a new or edit alarm
     if (widget.isNewAlarm) {
       // For a new alarm, use the provided initial values
@@ -150,9 +155,14 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                             7,
                             (index) => GestureDetector(
                               onTap: () {
+                                // Toggle the selection for the corresponding day
                                 setState(() {
                                   // Toggle the selection for the corresponding day
                                   selectedDays[index] = !selectedDays[index];
+                                  print(
+                                      'Selected Days in _CurvedBorderContainerState: $selectedDays');
+                                  widget.onSelectedDaysChanged(
+                                      selectedDays); // Notify parent
                                 });
                               },
                               child: Container(

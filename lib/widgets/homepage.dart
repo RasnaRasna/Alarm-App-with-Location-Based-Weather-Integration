@@ -20,6 +20,12 @@ class _MyHomePageState extends State<MyHomePage> {
       body: WatchBoxBuilder(
         box: Hive.box<Alarm>('alarms'),
         builder: (context, box) {
+          if (box.isEmpty) {
+            return Center(
+              child: Text('No alarms available'),
+            );
+          }
+
           return ListView.builder(
             itemCount: box.length,
             itemBuilder: (context, index) {

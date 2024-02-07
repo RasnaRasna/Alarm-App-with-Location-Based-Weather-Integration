@@ -20,13 +20,14 @@ class AlarmAdapter extends TypeAdapter<Alarm> {
       label: fields[0] as String?,
       time: fields[1] as DateTime?,
       color: fields[2] as int,
+      selectedDays: (fields[4] as List).cast<bool>(),
     )..key = fields[3] as int?;
   }
 
   @override
   void write(BinaryWriter writer, Alarm obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.label)
       ..writeByte(1)
@@ -34,7 +35,9 @@ class AlarmAdapter extends TypeAdapter<Alarm> {
       ..writeByte(2)
       ..write(obj.color)
       ..writeByte(3)
-      ..write(obj.key);
+      ..write(obj.key)
+      ..writeByte(4)
+      ..write(obj.selectedDays);
   }
 
   @override

@@ -11,8 +11,6 @@ class AlarmList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
-
     final formattedTime =
         DateFormat('hh:mm a').format(alarm.time ?? DateTime.now());
     return SizedBox(
@@ -72,7 +70,7 @@ class AlarmList extends StatelessWidget {
                         top: 80,
                         left: 20,
                         child: Days(
-                          days: [true, true, true, true, true, true, false],
+                          days: alarm.selectedDays ?? List.filled(7, false),
                         ),
                       ),
                       const Padding(

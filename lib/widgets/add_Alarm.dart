@@ -13,6 +13,9 @@ class AddAlarm extends StatefulWidget {
 }
 
 class _AddHabitState extends State<AddAlarm> {
+  List<bool> selectedDays =
+      List.generate(7, (index) => false); // Initialize with default values
+
   Color selectedColor = Color.fromARGB(
     255,
     8,
@@ -30,17 +33,18 @@ class _AddHabitState extends State<AddAlarm> {
           Column(
             children: [
               CurvedBorderContainer(
-                  isNewAlarm: true,
-                  labelController: labelController,
-                  initialTime: null, // Provide the initial time if needed
-                  initialLabel: '', // Provide the initial label if needed
-                  initialColor: Color.fromARGB(
-                    255,
-                    8,
-                    35,
-                    56,
-                  ) // Provide the initial color if needed
-                  ),
+                isNewAlarm: true,
+                labelController: labelController,
+                initialTime: null,
+                initialLabel: '',
+                initialColor: Color.fromARGB(255, 8, 35, 56),
+                initialSelectedDays: selectedDays,
+                onSelectedDaysChanged: (days) {
+                  setState(() {
+                    selectedDays = days;
+                  });
+                },
+              ),
               SizedBox(
                 height: 20,
               ),
@@ -134,19 +138,25 @@ class _AddHabitState extends State<AddAlarm> {
 
   void saveAlarm() async {
     final Box<Alarm> alarmBox = Hive.box<Alarm>('alarms');
+    print('Selected Days when creating Alarm: $selectedDays');
+
     final newAlarm = Alarm(
-      label: labelController.text, // Use the label from the controller
+      selectedDays: selectedDays,
+      label: labelController.text,
       time: DateTime.now(),
       color: selectedColor.value,
     );
 
-    print('Label in addalarm: ${labelController.text}');
-    final addedKey =
-        await alarmBox.add(newAlarm); // Retrieve the key after adding
+    print('New Alarm before saving: $newAlarm');
 
-    // Assign the key to the Alarm object
+    final addedKey = await alarmBox.add(newAlarm);
     newAlarm.key = addedKey;
 
     print('New Alarm added with key: $addedKey');
+    print('New Alarm after saving: $newAlarm');
+
+    // Retrieve the saved alarm from the database
+    final retrievedAlarm = alarmBox.get(addedKey);
+    print('Retrieved Alarm from the database: $retrievedAlarm');
   }
 }

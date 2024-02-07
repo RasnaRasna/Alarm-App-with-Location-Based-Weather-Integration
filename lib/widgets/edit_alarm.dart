@@ -34,6 +34,13 @@ class _EditAlarmState extends State<EditAlarm> {
       body: Column(
         children: [
           CurvedBorderContainer(
+            onSelectedDaysChanged: (newSelectedDays) {
+              // Handle the changes to the selected days, if needed
+              print('Selected Days in EditAlarm: $newSelectedDays');
+            },
+            initialSelectedDays:
+                widget.alarm.selectedDays, // Provide the initial selected days
+
             isNewAlarm: false,
             labelController: labelController,
             initialTime: widget.alarm.time != null
@@ -213,6 +220,38 @@ class _EditAlarmState extends State<EditAlarm> {
   }
 
   void saveChanges() async {
+    if (widget.alarm.label == labelController.text &&
+        widget.alarm.time ==
+            (selectedTime != null
+                ? DateTime(
+                    widget.alarm.time!.year,
+                    widget.alarm.time!.month,
+                    widget.alarm.time!.day,
+                    selectedTime!.hour,
+                    selectedTime!.minute,
+                  )
+                : widget.alarm.time) &&
+        widget.alarm.color == selectedColor.value) {
+      // No changes were made, show an error message
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No Changes Made'),
+            content: const Text('Please make changes before saving.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return; // Exit the method if no changes were made
+    }
     // Update the alarm object with the new values
     widget.alarm.label = labelController.text;
     widget.alarm.time = selectedTime != null
@@ -225,6 +264,7 @@ class _EditAlarmState extends State<EditAlarm> {
           )
         : widget.alarm.time; // Update the time if selectedTime is not null
     widget.alarm.color = selectedColor.value;
+    widget.alarm.selectedDays = widget.alarm.selectedDays;
 
     // Get the Hive box
     final Box<Alarm> alarmBox = Hive.box<Alarm>('alarms');
@@ -236,6 +276,12 @@ class _EditAlarmState extends State<EditAlarm> {
     await alarmBox.put(existingIndex, widget.alarm);
 
     // Once saved, you can navigate back to the previous screen
-    Navigator.pop(context); // Navigate back to the previous screen
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              MyHomePage()), // Provide the builder for MyHomePage
+      (route) => false,
+    );
   }
 }
