@@ -1,8 +1,17 @@
+import 'package:alarm_weather_app/database/model_class.dart';
 import 'package:alarm_weather_app/widgets/add_Alarm.dart';
 import 'package:alarm_weather_app/widgets/alarm_list.dart';
+import 'package:alarm_weather_app/widgets/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Hive.registerAdapter(AlarmAdapter());
+  await Hive.initFlutter();
+  await Hive.openBox('alarms'); // Open a Hive box for storing alarms
+
   runApp(const MyApp());
 }
 
@@ -14,37 +23,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Alarm App with Location-Based Weather Integration',
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: ListView(children: [AlarmList()]),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (ctx) => AddAlarm()));
-        },
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      home: MyHomePage(),
     );
   }
 }

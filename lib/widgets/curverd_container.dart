@@ -4,13 +4,17 @@ import 'date_picker.dart';
 
 class CurvedBorderContainer extends StatefulWidget {
   final bool isNewAlarm;
+  final TextEditingController labelController;
 
-  const CurvedBorderContainer({super.key, required this.isNewAlarm});
+  const CurvedBorderContainer(
+      {super.key, required this.isNewAlarm, required this.labelController});
   @override
   _CurvedBorderContainerState createState() => _CurvedBorderContainerState();
 }
 
 class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
+  TextEditingController labelController = TextEditingController();
+
   TimeOfDay? selectedTime;
   List<bool> selectedDays =
       List.generate(7, (index) => false); // To track selected days
@@ -20,6 +24,7 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
   @override
   Widget build(BuildContext context) {
     String title = widget.isNewAlarm ? "Set New Alarm" : "Edit Alarm";
+    print('Label in curverdcontainer: ${labelController.text}');
 
     return Container(
       height: 400,
@@ -100,9 +105,9 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                                     : const Text(
                                         "Tap to set time",
                                         style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 18,
-                                        ),
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
                                       ),
                               ),
                             ),
@@ -153,7 +158,9 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                             GestureDetector(
                               child: const Icon(Icons.edit),
                               onTap: () {
-                                _showLabelInputDialog(context);
+                                _showLabelInputDialog(
+                                  context,
+                                );
                               },
                             ),
                             const SizedBox(
@@ -182,16 +189,16 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
     );
   }
 
-  void _showLabelInputDialog(BuildContext context) {
-    TextEditingController labelController = TextEditingController();
-
+  void _showLabelInputDialog(
+    BuildContext context,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Enter Label"),
           content: TextField(
-            controller: labelController,
+            controller: widget.labelController, // Use the provided controller
             decoration: const InputDecoration(labelText: "Label"),
           ),
           actions: [
@@ -207,7 +214,7 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  label = labelController.text; // Save the label
+                  label = widget.labelController.text;
                 });
                 Navigator.pop(context); // Close the dialog
               },

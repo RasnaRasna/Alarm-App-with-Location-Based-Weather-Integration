@@ -1,15 +1,21 @@
+import 'package:alarm_weather_app/database/model_class.dart';
 import 'package:alarm_weather_app/widgets/curverd_container.dart';
+import 'package:alarm_weather_app/widgets/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:hive/hive.dart';
 
 class EditAlarm extends StatefulWidget {
-  EditAlarm({super.key});
+  final Alarm alarm; // Add this line
+
+  EditAlarm({super.key, required this.alarm});
 
   @override
-  State<EditAlarm> createState() => _AddHabitState();
+  State<EditAlarm> createState() => _EditAlarmState();
 }
 
-class _AddHabitState extends State<EditAlarm> {
+class _EditAlarmState extends State<EditAlarm> {
+  TextEditingController labelController = TextEditingController();
   Color selectedColor = Colors.blue;
   // Default color
   @override
@@ -17,7 +23,10 @@ class _AddHabitState extends State<EditAlarm> {
     return Scaffold(
       body: Column(
         children: [
-          CurvedBorderContainer(isNewAlarm: false),
+          CurvedBorderContainer(
+            isNewAlarm: false,
+            labelController: labelController,
+          ),
           SizedBox(
             height: 20,
           ),
@@ -87,9 +96,13 @@ class _AddHabitState extends State<EditAlarm> {
                           ),
                           actions: [
                             TextButton(
-                              onPressed: () {
-                                // Handle "Yes" button action
-                                Navigator.of(context).pop(); // Close the dialog
+                              onPressed: () async {
+                               
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyHomePage()),
+                                );
                               },
                               child: Text(
                                 "Yes",
@@ -166,4 +179,6 @@ class _AddHabitState extends State<EditAlarm> {
       },
     );
   }
+
+ 
 }
