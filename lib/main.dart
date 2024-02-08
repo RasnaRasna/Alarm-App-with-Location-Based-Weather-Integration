@@ -11,11 +11,18 @@ void main() async {
   Hive.registerAdapter(AlarmAdapter());
   await Hive.initFlutter();
   await Hive.openBox<Alarm>('alarms'); // Open a Hive box for storing alarms
-  await Permission.notification.isDenied.then((value) {
-    if (value) {
-      Permission.notification.request();
-    }
-  });
+// Check and request notification permission
+  var notificationStatus = await Permission.notification.status;
+  if (notificationStatus.isDenied || notificationStatus.isPermanentlyDenied) {
+    await Permission.notification.request();
+  }
+
+  // Check and request location permission
+  var locationStatus = await Permission.location.status;
+  if (locationStatus.isDenied || locationStatus.isPermanentlyDenied) {
+    await Permission.location.request();
+  }
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   // await initFcm();h
   runApp(const MyApp());

@@ -1,18 +1,20 @@
 import 'package:alarm_weather_app/database/model_class.dart';
+import 'package:alarm_weather_app/local_notification/notifcation_services.dart';
 import 'package:alarm_weather_app/widgets/curverd_container.dart';
 import 'package:alarm_weather_app/widgets/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 
 class AddAlarm extends StatefulWidget {
   AddAlarm({super.key});
 
   @override
-  State<AddAlarm> createState() => _AddHabitState();
+  State<AddAlarm> createState() => AddAlarmState();
 }
 
-class _AddHabitState extends State<AddAlarm> {
+class AddAlarmState extends State<AddAlarm> {
   List<bool> selectedDays =
       List.generate(7, (index) => false); // Initialize with default values
   DateTime? selectedTime;
@@ -22,8 +24,39 @@ class _AddHabitState extends State<AddAlarm> {
     35,
     56,
   );
-  // Default color
   TextEditingController labelController = TextEditingController();
+  final NotificationService notificationService = NotificationService();
+
+  Future<void> _scheduleNotification() async {
+    String title = "Alarm:${labelController.text}";
+    String body = 'It\'s time for your alarm!';
+
+    DateTime now = DateTime.now();
+    DateTime scheduledDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      selectedTime!.hour,
+      selectedTime!.minute,
+    );
+
+    for (int i = 0; i < 7; i++) {
+      if (selectedDays[i]) {
+        int daysUntilNext = (i - now.weekday + 7) % 7;
+        scheduledDateTime =
+            scheduledDateTime.add(Duration(days: daysUntilNext));
+
+        await notificationService.scheduleNotification(
+          id: labelController.text.hashCode,
+          title: title,
+          body: body,
+          scheduleNotificationDateTime: scheduledDateTime,
+        );
+      }
+    }
+  }
+
+  // Default color
 
   @override
   Widget build(BuildContext context) {
