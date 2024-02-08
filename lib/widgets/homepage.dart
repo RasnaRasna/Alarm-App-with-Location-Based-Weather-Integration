@@ -203,12 +203,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (context, index) {
                     final alarm = box.getAt(index) as Alarm;
 
-                    print('Alarm Time: ${alarm.time}');
+                    print('Alarm Time in homepage: ${alarm.time}');
 
-                    final selectedTime = alarm.time != null
-                        ? TimeOfDay.fromDateTime(alarm.time!)
-                        : null;
-                    print('Selected Time: $selectedTime');
+                    final selectedTime = alarm.time != null ? alarm.time : null;
+                    print('Selected Time in homepage: $selectedTime');
 
                     return AlarmList(
                       alarm: alarm,

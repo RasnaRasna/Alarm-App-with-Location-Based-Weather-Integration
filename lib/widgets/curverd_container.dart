@@ -377,7 +377,8 @@ class CurvedBorderContainer extends StatefulWidget {
     required this.initialSelectedDays,
     required this.onSelectedDaysChanged,
     this.initialSelectedTime,
-    required this.onTimeChanged, TimeOfDay? initialTime,
+    required this.onTimeChanged,
+    TimeOfDay? initialTime,
   }) : super(key: key);
 
   @override
@@ -395,6 +396,7 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
   void initState() {
     super.initState();
     selectedDays = List.from(widget.initialSelectedDays);
+    print({"selected time in_CurvedBorderContainerState $selectedTime"});
 
     // Initialize values based on whether it's a new or edit alarm
     if (widget.isNewAlarm) {

@@ -1,14 +1,21 @@
 import 'package:alarm_weather_app/database/model_class.dart';
 import 'package:alarm_weather_app/widgets/curverd_container.dart';
 import 'package:alarm_weather_app/widgets/homepage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:hive/hive.dart';
 
 class EditAlarm extends StatefulWidget {
   final Alarm alarm; // Add this line
+  final List<bool> initialSelectedDays; // Add this line
 
-  EditAlarm({super.key, required this.alarm});
+  final DateTime? selectedTime; // Change the type to DateTime?
+  EditAlarm(
+      {super.key,
+      required this.alarm,
+      required this.selectedTime,
+      required this.initialSelectedDays});
 
   @override
   State<EditAlarm> createState() => _EditAlarmState();
@@ -18,37 +25,59 @@ class _EditAlarmState extends State<EditAlarm> {
   TextEditingController labelController = TextEditingController();
   Color selectedColor = Colors.blue;
   // Default color
-  TimeOfDay? selectedTime; // Define selectedTime
+  DateTime? selectedTime;
+  late List<bool> selectedDays; // Declare selectedDays list
 
   @override
   void initState() {
     super.initState();
+    print('Selected time in EditAlarm: $selectedTime');
+    selectedDays = List.from(widget.initialSelectedDays);
+
+    if (widget.alarm.time != null) {
+      selectedTime = widget.alarm.time;
+    }
+    print('Selected time in EditAlarm after : $selectedTime');
+
     // Initialize the text controller and color with the values from the provided alarm
     labelController.text = widget.alarm.label ?? '';
     selectedColor = Color(widget.alarm.color);
+    // Print additional information
+    print('Widget alarm: ${widget.alarm}');
+    print('Widget alarm time: ${widget.alarm.time}');
+    print('Widget alarm color: ${widget.alarm.color}');
+    print('selected  alarm time in edit: ${selectedTime}');
   }
 
   @override
   Widget build(BuildContext context) {
+    print('Building EditAlarm widget');
+
     return Scaffold(
       body: Column(
         children: [
           CurvedBorderContainer(
+            onTimeChanged: (time) {
+              print('Selected time in CurvedBorderContainer: $time');
+              setState(() {
+                selectedTime = time;
+              });
+            },
             onSelectedDaysChanged: (newSelectedDays) {
-              // Handle the changes to the selected days, if needed
+              // Update the selectedDays list in the EditAlarm state
+              setState(() {
+                selectedDays = newSelectedDays;
+              });
               print('Selected Days in EditAlarm: $newSelectedDays');
             },
+
+            initialSelectedTime: selectedTime,
             initialSelectedDays:
                 widget.alarm.selectedDays, // Provide the initial selected days
-
             isNewAlarm: false,
             labelController: labelController,
-            initialTime: widget.alarm.time != null
-                ? TimeOfDay.fromDateTime(widget.alarm.time!)
-                : null,
             initialLabel: widget.alarm.label ?? '', // Provide the initial label
             initialColor: Color(widget.alarm.color),
-            onTimeChanged: (DateTime) {}, // Provide the initial color
           ),
           const SizedBox(
             height: 20,
@@ -220,18 +249,24 @@ class _EditAlarmState extends State<EditAlarm> {
   }
 
   void saveChanges() async {
+    // Define a tolerance for time comparison (e.g., 1 minute)
+    const int timeTolerance = 1;
+
     if (widget.alarm.label == labelController.text &&
-        widget.alarm.time ==
-            (selectedTime != null
-                ? DateTime(
+        widget.alarm.time != null &&
+        (selectedTime == null ||
+            (widget.alarm.time!.difference(
+                  DateTime(
                     widget.alarm.time!.year,
                     widget.alarm.time!.month,
                     widget.alarm.time!.day,
                     selectedTime!.hour,
                     selectedTime!.minute,
-                  )
-                : widget.alarm.time) &&
-        widget.alarm.color == selectedColor.value) {
+                  ),
+                )).abs() <=
+                Duration(minutes: timeTolerance)) &&
+        widget.alarm.color == selectedColor.value &&
+        listEquals(widget.alarm.selectedDays, selectedDays)) {
       // No changes were made, show an error message
       showDialog(
         context: context,
@@ -252,6 +287,7 @@ class _EditAlarmState extends State<EditAlarm> {
       );
       return; // Exit the method if no changes were made
     }
+
     // Update the alarm object with the new values
     widget.alarm.label = labelController.text;
     widget.alarm.time = selectedTime != null
@@ -264,15 +300,13 @@ class _EditAlarmState extends State<EditAlarm> {
           )
         : widget.alarm.time; // Update the time if selectedTime is not null
     widget.alarm.color = selectedColor.value;
+    widget.alarm.selectedDays = List.from(selectedDays); // Update selected days
 
     // Get the Hive box
     final Box<Alarm> alarmBox = Hive.box<Alarm>('alarms');
 
-    // Find the index of the existing object in the box
-    final int existingIndex = alarmBox.values.toList().indexOf(widget.alarm);
-
-    // Put the updated object back into the box
-    await alarmBox.put(existingIndex, widget.alarm);
+    // Update the object in Hive using its key
+    await alarmBox.put(widget.alarm.key, widget.alarm);
 
     // Once saved, you can navigate back to the previous screen
     Navigator.pushAndRemoveUntil(

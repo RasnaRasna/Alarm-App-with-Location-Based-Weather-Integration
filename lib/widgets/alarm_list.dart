@@ -6,19 +6,18 @@ import 'package:intl/intl.dart';
 
 class AlarmList extends StatelessWidget {
   final Alarm alarm;
-  final TimeOfDay? selectedTime; // Add selectedTime parameter
+  final DateTime? selectedTime; // Change the type to DateTime?
 
   const AlarmList({super.key, required this.alarm, this.selectedTime});
 
   @override
   Widget build(BuildContext context) {
     final formattedTime = selectedTime != null
-        ? selectedTime!.format(context)
+        ? DateFormat('hh:mm a').format(selectedTime!)
         : alarm.time != null
             ? DateFormat('hh:mm a').format(alarm.time!)
             : '';
-
-    print('Formatted Time: $formattedTime');
+    print('Formatted Time in alraList: $formattedTime');
 
     return SizedBox(
         height: 125,
@@ -27,12 +26,17 @@ class AlarmList extends StatelessWidget {
             child: Card(
               child: GestureDetector(
                 onTap: () {
+                  print(
+                      'Navigating to EditAlarm with selectedTime in AlarmList: $selectedTime');
+                  print(
+                      'Navigating to EditAlarm with selecteddays in AlarmList: $alarm.selectedDays');
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (ctx) => EditAlarm(
-                        alarm: alarm,
-                      ),
+                          alarm: alarm,
+                          selectedTime: selectedTime, // Pass the selected time
+                          initialSelectedDays: alarm.selectedDays),
                     ),
                   );
                 },
