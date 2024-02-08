@@ -354,26 +354,30 @@
 //   }
 // } Import necessary packages and files
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'date_picker.dart';
 
 class CurvedBorderContainer extends StatefulWidget {
   final bool isNewAlarm;
   final TextEditingController labelController;
-  final TimeOfDay? initialTime;
+
   final String initialLabel;
   final Color initialColor;
   final List<bool> initialSelectedDays; // Add initialSelectedDays parameter
   final Function(List<bool>) onSelectedDaysChanged; // Add this callback
+  final DateTime? initialSelectedTime; // Add this parameter
+  final Function(DateTime?) onTimeChanged; // Add this callback
 
   const CurvedBorderContainer({
     Key? key,
     required this.isNewAlarm,
     required this.labelController,
-    required this.initialTime,
     required this.initialLabel,
     required this.initialColor,
     required this.initialSelectedDays,
     required this.onSelectedDaysChanged,
+    this.initialSelectedTime,
+    required this.onTimeChanged, TimeOfDay? initialTime,
   }) : super(key: key);
 
   @override
@@ -382,7 +386,7 @@ class CurvedBorderContainer extends StatefulWidget {
 
 class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
   TextEditingController labelController = TextEditingController();
-  TimeOfDay? selectedTime;
+  DateTime? selectedTime;
   String label = "";
   Color selectedColor = Colors.blue;
   late List<bool> selectedDays; // Declare selectedDays list
@@ -394,10 +398,10 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
 
     // Initialize values based on whether it's a new or edit alarm
     if (widget.isNewAlarm) {
-      // For a new alarm, use the provided initial values
-      selectedTime = widget.initialTime;
       label = widget.initialLabel;
       selectedColor = widget.initialColor;
+      selectedTime =
+          widget.initialSelectedTime; // Use the existing selectedTime
     }
     // For editing an alarm, the values will be set later in the build method
   }
@@ -408,7 +412,6 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
 
     // Initialize values for editing an alarm in the build method
     if (!widget.isNewAlarm) {
-      selectedTime ??= widget.initialTime;
       label = label.isEmpty ? widget.initialLabel : label;
       selectedColor =
           selectedColor == Colors.blue ? widget.initialColor : selectedColor;
@@ -476,15 +479,17 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                           child: GestureDetector(
                             onTap: () {
                               // Show the AlarmTime widget when the card is tapped
-                              _showAlarmTimePicker(context);
+                              _showAlarmTimePicker(
+                                context,
+                              );
                             },
                             child: Container(
-                              width: 300, // Adjust the width as needed
-                              height: 150, // Adjust the height as needed
+                              width: 300,
+                              height: 150,
                               child: Center(
                                 child: selectedTime != null
                                     ? Text(
-                                        "${selectedTime!.format(context)}",
+                                        "Selected Time: ${DateFormat('HH:mm').format(selectedTime!)}",
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
@@ -583,6 +588,13 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
     );
   }
 
+  void _updateSelectedTime(DateTime selectedTime) {
+    setState(() {
+      this.selectedTime = selectedTime;
+      widget.onTimeChanged(selectedTime); // Call the callback
+    });
+  }
+
   void _showLabelInputDialog(
     BuildContext context,
   ) {
@@ -627,27 +639,28 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
 
   // Function to show the AlarmTime widget as a bottom sheet
   void _showAlarmTimePicker(BuildContext context) async {
-    TimeOfDay? pickedTime = await showModalBottomSheet(
+    DateTime? pickedTime = await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return AlarmTime(
           initialDateTime: DateTime.now(),
-          onDateTimeChanged: (DateTime dateTime) {
-            // Handle the selected time as needed
-            setState(() {
-              selectedTime = TimeOfDay.fromDateTime(dateTime);
-            });
-          },
+          onDateTimeChanged: _updateSelectedTime,
         );
       },
     );
 
-    // Handle the selected time from the AlarmTime widget
     if (pickedTime != null) {
-      setState(() {
-        selectedTime = pickedTime;
-      });
+      // Save the selected time to the database or perform any other action
+      // based on your requirements
+      saveAlarmTime(pickedTime);
     }
+  }
+
+  void saveAlarmTime(DateTime selectedTime) {
+    // Perform the necessary action to save the selected time to the database
+    // For example, you can update the existing alarm or save it separately
+    print("Selected Time: $selectedTime");
+    // Add your logic to save the time to the database
   }
 
   // Helper function to get the day name based on the index

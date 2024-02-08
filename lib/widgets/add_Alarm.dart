@@ -15,8 +15,8 @@ class AddAlarm extends StatefulWidget {
 class _AddHabitState extends State<AddAlarm> {
   List<bool> selectedDays =
       List.generate(7, (index) => false); // Initialize with default values
-
-  Color selectedColor = Color.fromARGB(
+  DateTime? selectedTime;
+  Color selectedColor = const Color.fromARGB(
     255,
     8,
     35,
@@ -33,31 +33,36 @@ class _AddHabitState extends State<AddAlarm> {
           Column(
             children: [
               CurvedBorderContainer(
+                initialSelectedTime: selectedTime,
                 isNewAlarm: true,
                 labelController: labelController,
-                initialTime: null,
                 initialLabel: '',
-                initialColor: Color.fromARGB(255, 8, 35, 56),
+                initialColor: const Color.fromARGB(255, 8, 35, 56),
                 initialSelectedDays: selectedDays,
+                onTimeChanged: (time) {
+                  setState(() {
+                    selectedTime = time;
+                  });
+                },
                 onSelectedDaysChanged: (days) {
                   setState(() {
                     selectedDays = days;
                   });
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Row(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
-                  Text(
+                  const Text(
                     "Pick a Color",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   GestureDetector(
@@ -73,12 +78,12 @@ class _AddHabitState extends State<AddAlarm> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(
+                  backgroundColor: const Color.fromARGB(
                     255,
                     8,
                     35,
@@ -92,11 +97,11 @@ class _AddHabitState extends State<AddAlarm> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            MyHomePage()), // Provide the builder for MyHomePage
+                            const MyHomePage()), // Provide the builder for MyHomePage
                     (route) => false,
                   );
                 },
-                child: Text(
+                child: const Text(
                   "Save",
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
@@ -113,7 +118,7 @@ class _AddHabitState extends State<AddAlarm> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pick a Color'),
+          title: const Text('Pick a Color'),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: selectedColor,
@@ -131,7 +136,7 @@ class _AddHabitState extends State<AddAlarm> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -144,11 +149,10 @@ class _AddHabitState extends State<AddAlarm> {
     print('Selected Days when creating Alarm: $selectedDays');
 
     final newAlarm = Alarm(
-      selectedDays: selectedDays,
-      label: labelController.text,
-      time: DateTime.now(),
-      color: selectedColor.value,
-    );
+        selectedDays: selectedDays,
+        label: labelController.text,
+        color: selectedColor.value,
+        time: selectedTime);
 
     print('New Alarm before saving: $newAlarm');
 

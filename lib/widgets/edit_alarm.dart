@@ -47,8 +47,8 @@ class _EditAlarmState extends State<EditAlarm> {
                 ? TimeOfDay.fromDateTime(widget.alarm.time!)
                 : null,
             initialLabel: widget.alarm.label ?? '', // Provide the initial label
-            initialColor:
-                Color(widget.alarm.color), // Provide the initial color
+            initialColor: Color(widget.alarm.color),
+            onTimeChanged: (DateTime) {}, // Provide the initial color
           ),
           const SizedBox(
             height: 20,

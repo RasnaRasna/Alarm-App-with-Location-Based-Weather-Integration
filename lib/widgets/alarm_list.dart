@@ -14,8 +14,11 @@ class AlarmList extends StatelessWidget {
   Widget build(BuildContext context) {
     final formattedTime = selectedTime != null
         ? selectedTime!.format(context)
-        : DateFormat('hh:mm a').format(alarm.time ?? DateTime.now());
-    print('time in AlarmList: $selectedTime');
+        : alarm.time != null
+            ? DateFormat('hh:mm a').format(alarm.time!)
+            : '';
+
+    print('Formatted Time: $formattedTime');
 
     return SizedBox(
         height: 125,
