@@ -1,12 +1,13 @@
 import 'dart:convert';
-
 import 'package:alarm_weather_app/database/model_class.dart';
 import 'package:alarm_weather_app/widgets/add_Alarm.dart';
 import 'package:alarm_weather_app/widgets/alarm_list.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -20,9 +21,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late String currentLatitude = '0.0';
   late String currentLongitude = '0.0';
   Map<String, dynamic>? currentWeatherData;
-
-  // Define API key at the class level
   final String apiKey = 'b662e9abd4114adab5a8d0ae8fc06d5d';
+  String currentCity = '';
 
   @override
   void initState() {
@@ -30,30 +30,31 @@ class _MyHomePageState extends State<MyHomePage> {
     _getCurrentLocation();
   }
 
-  // Function to get the current location
   Future<void> _getCurrentLocation() async {
     var status = await Permission.location.status;
     if (status.isGranted) {
-      // Location permission is granted, proceed with getting the location.
       try {
         Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
 
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+
         setState(() {
           currentLatitude = position.latitude.toString();
           currentLongitude = position.longitude.toString();
+          currentCity =
+              placemarks.isNotEmpty ? placemarks.first.locality ?? '' : '';
         });
-        print(currentWeatherData);
 
-        // Fetch weather information after obtaining the location
         await _updateWeather();
       } catch (e) {
         print("Error getting location: $e");
       }
     } else {
-      // Location permission is not granted, request it.
       await Permission.location.request();
-      // The user will be prompted to grant the location permission.
     }
   }
 
@@ -80,21 +81,15 @@ class _MyHomePageState extends State<MyHomePage> {
         currentWeatherData!['main']['temp'] != null) {
       double temperatureInKelvin =
           currentWeatherData!['main']['temp'].toDouble();
-      // Convert temperature from Kelvin to Celsius
       double temperatureInCelsius = temperatureInKelvin - 273.15;
-      // You can also convert temperature to Fahrenheit if needed
-      // double temperatureInFahrenheit = (temperatureInCelsius * 9/5) + 32;
-
-      return 'Temperature: ${temperatureInCelsius.toStringAsFixed(2)}°C';
+      return '${temperatureInCelsius.toStringAsFixed(2)}°C';
     } else {
-      return 'Temperature: N/A';
+      return 'processing ....';
     }
   }
 
-  // Function to get the current weather
   Future<void> _updateWeather() async {
     try {
-      // Check if currentLatitude is not null before making the API call
       if (currentLatitude == null || currentLongitude == null) {
         print('Location not available yet.');
         return;
@@ -108,9 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (response.statusCode == 200) {
         currentWeatherData = json.decode(response.body);
-        setState(() {
-          // Trigger a rebuild to display weather information
-        });
+        setState(() {});
       } else {
         print('Failed to load weather data');
       }
@@ -119,72 +112,157 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  String _getCurrentDay() {
+    return DateFormat('EEEE').format(DateTime.now());
+  }
+
+  String getHighTemperature() {
+    if (currentWeatherData != null &&
+        currentWeatherData!['main'] != null &&
+        currentWeatherData!['main']['temp_max'] != null) {
+      double highTemperatureInKelvin =
+          currentWeatherData!['main']['temp_max'].toDouble();
+      double highTemperatureInCelsius = highTemperatureInKelvin - 273.15;
+      return '${highTemperatureInCelsius.toStringAsFixed(2)}°C';
+    } else {
+      return 'processing ....';
+    }
+  }
+
+  String getLowTemperature() {
+    if (currentWeatherData != null &&
+        currentWeatherData!['main'] != null &&
+        currentWeatherData!['main']['temp_min'] != null) {
+      double lowTemperatureInKelvin =
+          currentWeatherData!['main']['temp_min'].toDouble();
+      double lowTemperatureInCelsius = lowTemperatureInKelvin - 273.15;
+      return '${lowTemperatureInCelsius.toStringAsFixed(2)}°C';
+    } else {
+      return 'processing ...';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 95, 137, 171),
         centerTitle: true,
-        title: Text(
-          'Weather and Alarms',
+        title: const Text(
+          'Weather App',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
+            margin: const EdgeInsets.all(16.0),
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 95, 137, 171),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(50),
-                bottomRight: Radius.circular(50),
-              ),
+              color: Color.fromARGB(255, 139, 167, 190),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (currentLatitude != '0.0' && currentLongitude != '0.0')
-                  Text(
-                    'Latitude: ${double.parse(currentLatitude).toStringAsFixed(2)}, Longitude: ${double.parse(currentLongitude).toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Display the current day
+                    Text(
+                      '${_getCurrentDay()}',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  getTemperature(),
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
-                  ),
-                ),
-                if (currentWeatherData != null)
-                  Row(
-                    children: [
-                      Text(
-                        'Weather: ${currentWeatherData!['weather'][0]['description']}',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
+                    // Display city name here
+                    Text(
+                      '$currentCity',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
                       ),
-                      SizedBox(width: 10),
-                      Text(
-                        getWeatherIcon(
-                            currentWeatherData!['weather'][0]['main']),
-                        style: TextStyle(
-                          fontSize: 30,
-                          color: Colors.white,
-                        ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Display temperature value
+                          Text(
+                            ' ${getTemperature()}',
+                            style: TextStyle(
+                              fontSize: 35,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          // Display H and its value
+                          Text(
+                            'H: ${getHighTemperature()}',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
+                            ),
+                          ),
+                          // Display L and its value
+                          Text(
+                            'L: ${getLowTemperature()}',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // Display weather icon if currentWeatherData is not null
+                          if (currentWeatherData != null &&
+                              currentWeatherData!['weather'] != null &&
+                              currentWeatherData!['weather'].isNotEmpty)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  ' ${currentWeatherData!['weather'][0]['description']}',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  getWeatherIcon(currentWeatherData!['weather']
+                                      [0]['main']),
+                                  style: const TextStyle(
+                                    fontSize: 100,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
           ),
@@ -193,7 +271,7 @@ class _MyHomePageState extends State<MyHomePage> {
               box: Hive.box<Alarm>('alarms'),
               builder: (context, box) {
                 if (box.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Text('No alarms available'),
                   );
                 }

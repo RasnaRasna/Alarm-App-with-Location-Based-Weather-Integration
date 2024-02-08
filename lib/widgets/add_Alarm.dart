@@ -41,12 +41,15 @@ class AddAlarmState extends State<AddAlarm> {
     );
 
     for (int i = 0; i < 7; i++) {
+      print('Executing _scheduleNotification');
+
       if (selectedDays[i]) {
         int daysUntilNext = (i - now.weekday + 7) % 7;
         scheduledDateTime =
             scheduledDateTime.add(Duration(days: daysUntilNext));
+        print('Scheduling notification: $title, $body, $scheduledDateTime');
 
-        await notificationService.scheduleNotification(
+        await notificationService.sheduleNotification(
           id: labelController.text.hashCode,
           title: title,
           body: body,
@@ -125,6 +128,7 @@ class AddAlarmState extends State<AddAlarm> {
                 ),
                 onPressed: () {
                   saveAlarm();
+                  _scheduleNotification();
 
                   Navigator.pushAndRemoveUntil(
                     context,
