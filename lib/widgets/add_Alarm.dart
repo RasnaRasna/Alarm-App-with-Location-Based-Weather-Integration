@@ -26,6 +26,15 @@ class AddAlarmState extends State<AddAlarm> {
   );
   TextEditingController labelController = TextEditingController();
   //
+  bool validateInput() {
+    if (selectedDays.contains(true) &&
+        selectedTime != null &&
+        labelController.text.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,15 +102,55 @@ class AddAlarmState extends State<AddAlarm> {
                   ),
                 ),
                 onPressed: () {
-                  scheduleNotification();
-                  saveAlarm();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const MyHomePage()), // Provide the builder for MyHomePage
-                    (route) => false,
-                  );
+                  if (validateInput()) {
+                    scheduleNotification();
+                    saveAlarm();
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MyHomePage(),
+                      ),
+                      (route) => false,
+                    );
+                  } else {
+                    List<String> missingFields = [];
+
+                    if (!selectedDays.contains(true)) {
+                      missingFields.add('Days');
+                    }
+
+                    if (selectedTime == null) {
+                      missingFields.add('Time');
+                    }
+
+                    if (labelController.text.isEmpty) {
+                      missingFields.add('Label');
+                    }
+
+                    String errorMessage =
+                        'Please fill in the following required fields: ${missingFields.join(', ')}';
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Error'),
+                          content: Text(
+                            errorMessage,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
                 },
                 child: const Text(
                   "Save",
@@ -191,7 +240,6 @@ class AddAlarmState extends State<AddAlarm> {
             body: 'It\'s time for your alarm!',
           ),
           schedule: NotificationCalendar(
-            
             weekday: selectedTime!.weekday,
             hour: selectedTime!.hour,
             minute: selectedTime!.minute,
@@ -209,37 +257,3 @@ class AddAlarmState extends State<AddAlarm> {
     }
   }
 }
-
-// Future<void> _scheduleNotification() async {
-//     String title = "Alarm:${labelController.text}";
-//     String body = 'It\'s time for your alarm!';
-
-//     DateTime now = DateTime.now();
-//     DateTime scheduledDateTime = DateTime(
-//       now.year,
-//       now.month,
-//       now.day,
-//       selectedTime!.hour,
-//       selectedTime!.minute,
-//     );
-
-//     for (int i = 0; i < 7; i++) {
-//       print('Executing _scheduleNotification');
-
-//       if (selectedDays[i]) {
-//         int daysUntilNext = (i - now.weekday + 7) % 7;
-//         scheduledDateTime =
-//             scheduledDateTime.add(Duration(days: daysUntilNext));
-//         print('Scheduling notification: $title, $body, $scheduledDateTime');
-
-//         await notificationService.sheduleNotification(
-//           id: labelController.text.hashCode,
-//           title: title,
-//           body: body,
-//           scheduleNotificationDateTime: scheduledDateTime,
-//         );
-//       }
-//     }
-//   }
-
-//   Default color
