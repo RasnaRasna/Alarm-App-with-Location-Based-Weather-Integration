@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class AlarmList extends StatelessWidget {
   final Alarm alarm;
-  final DateTime? selectedTime; // Change the type to DateTime?
+  final DateTime? selectedTime; 
 
   const AlarmList({super.key, required this.alarm, this.selectedTime});
 
@@ -84,7 +84,7 @@ class AlarmList extends StatelessWidget {
                           days: alarm.selectedDays ?? List.filled(7, false),
                         ),
                       ),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.symmetric(
                           vertical: 5,
                           horizontal: 10,
@@ -95,12 +95,9 @@ class AlarmList extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 30,
-                              ),
-                              child: Icon(
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(
                                 Icons.toggle_off,
                                 size: 40,
                               ),

@@ -16,12 +16,21 @@ class Alarm {
   int? key; // Expose the key
   @HiveField(4)
   List<bool> selectedDays;
-  Alarm(
-      {this.label, this.time, required this.color, required this.selectedDays});
+
+  @HiveField(5)
+  bool isActive;
+
+  Alarm({
+    this.label,
+    this.time,
+    required this.color,
+    required this.selectedDays,
+    this.isActive = true,
+  });
   Color get alarmColor => Color(color);
   @override
   String toString() {
-    return 'Alarm(key: $key, label: $label, time: $time, color: $color, selectedDays: $selectedDays)';
+    return 'Alarm(key: $key, label: $label, time: $time, color: $color, selectedDays: $selectedDays,isActive: $isActive)';
   }
   // Additional fields and methods as needed
 }
