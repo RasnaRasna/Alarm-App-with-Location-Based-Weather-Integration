@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:alarm_weather_app/database/model_class.dart';
+import 'package:alarm_weather_app/local_notification/notifcation_services.dart';
 import 'package:alarm_weather_app/widgets/add_Alarm.dart';
 import 'package:alarm_weather_app/widgets/alarm_list.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:geocoding/geocoding.dart';
@@ -27,6 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    // notificationHelper.initialize();
+
     _getCurrentLocation();
   }
 
@@ -75,16 +80,23 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  String getTemperature() {
+  Widget getTemperatureWidget() {
     if (currentWeatherData != null &&
         currentWeatherData!['main'] != null &&
         currentWeatherData!['main']['temp'] != null) {
       double temperatureInKelvin =
           currentWeatherData!['main']['temp'].toDouble();
       double temperatureInCelsius = temperatureInKelvin - 273.15;
-      return '${temperatureInCelsius.toStringAsFixed(2)}°C';
+
+      return Text(
+        '${temperatureInCelsius.toStringAsFixed(2)}°C',
+        style: TextStyle(
+          fontSize: 35,
+          color: Colors.white,
+        ),
+      );
     } else {
-      return 'processing ....';
+      return CircularProgressIndicator();
     }
   }
 
@@ -125,8 +137,24 @@ class _MyHomePageState extends State<MyHomePage> {
       double highTemperatureInCelsius = highTemperatureInKelvin - 273.15;
       return '${highTemperatureInCelsius.toStringAsFixed(2)}°C';
     } else {
-      return 'processing ....';
+      return '';
     }
+  }
+
+  void showForegroundNotification() {
+    FlutterLocalNotificationsPlugin().show(
+      0,
+      'Foreground Notification',
+      'This is a foreground notification',
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'channelId',
+          'channelName',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+      ),
+    );
   }
 
   String getLowTemperature() {
@@ -138,9 +166,11 @@ class _MyHomePageState extends State<MyHomePage> {
       double lowTemperatureInCelsius = lowTemperatureInKelvin - 273.15;
       return '${lowTemperatureInCelsius.toStringAsFixed(2)}°C';
     } else {
-      return 'processing ...';
+      return ' ';
     }
   }
+
+  // NotificationHelper notificationHelper = NotificationHelper();
 
   @override
   Widget build(BuildContext context) {
@@ -202,13 +232,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Display temperature value
-                          Text(
-                            ' ${getTemperature()}',
-                            style: TextStyle(
-                              fontSize: 35,
-                              color: Colors.white,
-                            ),
-                          ),
+
+                          getTemperatureWidget(),
+
                           const SizedBox(height: 20),
                           // Display H and its value
                           Text(
@@ -272,7 +298,10 @@ class _MyHomePageState extends State<MyHomePage> {
               builder: (context, box) {
                 if (box.isEmpty) {
                   return const Center(
-                    child: Text('No alarms available'),
+                    child: Text(
+                      'No alarms available',
+                      style: TextStyle(fontSize: 20),
+                    ),
                   );
                 }
 
@@ -298,13 +327,40 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color.fromARGB(255, 139, 167, 190),
         onPressed: () {
+          scheduleNotification();
           Navigator.push(
             context,
             MaterialPageRoute(builder: (ctx) => AddAlarm()),
           );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  void scheduleNotification() {
+    print('Scheduling notification...');
+
+    DateTime scheduledTime = DateTime.now().add(Duration(minutes: 1));
+
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 0,
+        channelKey: 'basic_channel',
+        title: 'Scheduled Notification',
+        body: 'This is a scheduled notification awesome',
+      ),
+      schedule: NotificationCalendar(
+        weekday: 5,
+        hour: scheduledTime.hour,
+        minute: scheduledTime.minute,
+        second: scheduledTime.second,
+        millisecond: scheduledTime.millisecond,
       ),
     );
   }

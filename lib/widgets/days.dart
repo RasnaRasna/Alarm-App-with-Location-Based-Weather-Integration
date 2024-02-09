@@ -25,7 +25,7 @@ class Days extends StatelessWidget {
       margin: const EdgeInsets.only(right: 5),
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.blue : Colors.grey,
+        color: isSelected ? Color.fromARGB(255, 128, 167, 196) : Colors.white,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Text(

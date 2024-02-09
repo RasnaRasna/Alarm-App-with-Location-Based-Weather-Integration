@@ -2,6 +2,7 @@ import 'package:alarm_weather_app/database/model_class.dart';
 import 'package:alarm_weather_app/local_notification/notifcation_services.dart';
 import 'package:alarm_weather_app/widgets/curverd_container.dart';
 import 'package:alarm_weather_app/widgets/homepage.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -25,41 +26,8 @@ class AddAlarmState extends State<AddAlarm> {
     56,
   );
   TextEditingController labelController = TextEditingController();
-  final NotificationService notificationService = NotificationService();
-
-  Future<void> _scheduleNotification() async {
-    String title = "Alarm:${labelController.text}";
-    String body = 'It\'s time for your alarm!';
-
-    DateTime now = DateTime.now();
-    DateTime scheduledDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      selectedTime!.hour,
-      selectedTime!.minute,
-    );
-
-    for (int i = 0; i < 7; i++) {
-      print('Executing _scheduleNotification');
-
-      if (selectedDays[i]) {
-        int daysUntilNext = (i - now.weekday + 7) % 7;
-        scheduledDateTime =
-            scheduledDateTime.add(Duration(days: daysUntilNext));
-        print('Scheduling notification: $title, $body, $scheduledDateTime');
-
-        await notificationService.sheduleNotification(
-          id: labelController.text.hashCode,
-          title: title,
-          body: body,
-          scheduleNotificationDateTime: scheduledDateTime,
-        );
-      }
-    }
-  }
-
-  // Default color
+  // NotificationService notificationService = NotificationService();
+  //
 
   @override
   Widget build(BuildContext context) {
@@ -127,9 +95,8 @@ class AddAlarmState extends State<AddAlarm> {
                   ),
                 ),
                 onPressed: () {
-                  saveAlarm();
-                  _scheduleNotification();
-
+                  // scheduleNotification();
+                  // saveAlarm();
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
@@ -149,6 +116,8 @@ class AddAlarmState extends State<AddAlarm> {
       ),
     );
   }
+
+  
 
   void _openColorPickerDialog() {
     showDialog(
@@ -204,3 +173,37 @@ class AddAlarmState extends State<AddAlarm> {
     print('Retrieved Alarm from the database: $retrievedAlarm');
   }
 }
+
+// Future<void> _scheduleNotification() async {
+//     String title = "Alarm:${labelController.text}";
+//     String body = 'It\'s time for your alarm!';
+
+//     DateTime now = DateTime.now();
+//     DateTime scheduledDateTime = DateTime(
+//       now.year,
+//       now.month,
+//       now.day,
+//       selectedTime!.hour,
+//       selectedTime!.minute,
+//     );
+
+//     for (int i = 0; i < 7; i++) {
+//       print('Executing _scheduleNotification');
+
+//       if (selectedDays[i]) {
+//         int daysUntilNext = (i - now.weekday + 7) % 7;
+//         scheduledDateTime =
+//             scheduledDateTime.add(Duration(days: daysUntilNext));
+//         print('Scheduling notification: $title, $body, $scheduledDateTime');
+
+//         await notificationService.sheduleNotification(
+//           id: labelController.text.hashCode,
+//           title: title,
+//           body: body,
+//           scheduleNotificationDateTime: scheduledDateTime,
+//         );
+//       }
+//     }
+//   }
+
+//   Default color

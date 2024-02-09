@@ -32,9 +32,6 @@ class CurvedBorderContainer extends StatefulWidget {
 }
 
 class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
-
-  
-
   TextEditingController labelController = TextEditingController();
   DateTime? selectedTime;
   String label = "";
@@ -140,7 +137,7 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                               child: Center(
                                 child: selectedTime != null
                                     ? Text(
-                                        "Selected Time: ${DateFormat('HH:mm').format(selectedTime!)}",
+                                        " ${DateFormat('HH:mm').format(selectedTime!)}",
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
