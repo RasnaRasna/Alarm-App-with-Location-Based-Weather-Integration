@@ -15,7 +15,7 @@ void main() async {
   await Hive.openBox<Alarm>('alarms'); // Open a Hive box for storing alarms
 
   AwesomeNotifications().initialize(
-    'resource://drawable/notification_icon',
+    'resource://drawable/icon_notification',
     [
       NotificationChannel(
         channelKey: 'basic_channel',

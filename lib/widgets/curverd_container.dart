@@ -51,7 +51,6 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
       selectedTime =
           widget.initialSelectedTime; // Use the existing selectedTime
     }
-    // For editing an alarm, the values will be set later in the build method
   }
 
   @override
@@ -64,6 +63,7 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
       selectedColor =
           selectedColor == Colors.blue ? widget.initialColor : selectedColor;
       // Set selectedDays based on the provided alarm or provide default values
+      selectedTime = selectedTime ?? widget.initialSelectedTime;
     }
     print({"selected time in_CurvedBorderContainerState $selectedTime"});
     return Container(
@@ -137,7 +137,7 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
                               child: Center(
                                 child: selectedTime != null
                                     ? Text(
-                                        " ${DateFormat('HH:mm').format(selectedTime!)}",
+                                        " ${DateFormat('hh:mm a').format(selectedTime!)}",
                                         style: const TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
@@ -315,17 +315,17 @@ class _CurvedBorderContainerState extends State<CurvedBorderContainer> {
   String getDayName(int index) {
     switch (index) {
       case 0:
-        return 'S';
-      case 1:
         return 'M';
+      case 1:
+        return 'T';
       case 2:
-        return 'T';
-      case 3:
         return 'W';
-      case 4:
+      case 3:
         return 'T';
-      case 5:
+      case 4:
         return 'F';
+      case 5:
+        return 'S';
       case 6:
         return 'S';
       default:

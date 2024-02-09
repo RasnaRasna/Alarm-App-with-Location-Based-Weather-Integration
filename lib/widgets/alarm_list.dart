@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class AlarmList extends StatelessWidget {
   final Alarm alarm;
-  final DateTime? selectedTime; 
+  final DateTime? selectedTime;
 
   const AlarmList({super.key, required this.alarm, this.selectedTime});
 
@@ -52,8 +52,8 @@ class AlarmList extends StatelessWidget {
                   child: Stack(
                     children: [
                       Positioned(
-                        top: 15,
-                        left: 20,
+                        top: 5,
+                        left: 15,
                         child: Text(
                           alarm.label?.isNotEmpty ?? false
                               ? alarm.label!
@@ -66,8 +66,8 @@ class AlarmList extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        top: 50,
-                        left: 20,
+                        top: 35,
+                        left: 15,
                         child: Text(
                           formattedTime,
                           style: const TextStyle(
@@ -78,31 +78,10 @@ class AlarmList extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        top: 80,
-                        left: 20,
+                        top: 70,
+                        left: 15,
                         child: Days(
                           days: alarm.selectedDays ?? List.filled(7, false),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 5,
-                          horizontal: 10,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                            ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.toggle_off,
-                                size: 40,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ],

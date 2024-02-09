@@ -1,6 +1,7 @@
 import 'package:alarm_weather_app/database/model_class.dart';
 import 'package:alarm_weather_app/widgets/curverd_container.dart';
 import 'package:alarm_weather_app/widgets/homepage.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -54,145 +55,151 @@ class _EditAlarmState extends State<EditAlarm> {
     print('Building EditAlarm widget');
 
     return Scaffold(
-      body: Column(
+      body: ListView(
         children: [
-          CurvedBorderContainer(
-            onTimeChanged: (time) {
-              print('Selected time in CurvedBorderContainer: $time');
-              setState(() {
-                selectedTime = time;
-              });
-            },
-            onSelectedDaysChanged: (newSelectedDays) {
-              // Update the selectedDays list in the EditAlarm state
-              setState(() {
-                selectedDays = newSelectedDays;
-              });
-              print('Selected Days in EditAlarm: $newSelectedDays');
-            },
+          Column(
+            children: [
+              CurvedBorderContainer(
+                onTimeChanged: (time) {
+                  print('Selected time in CurvedBorderContainer: $time');
+                  setState(() {
+                    selectedTime = time;
+                  });
+                },
+                onSelectedDaysChanged: (newSelectedDays) {
+                  // Update the selectedDays list in the EditAlarm state
+                  setState(() {
+                    selectedDays = newSelectedDays;
+                  });
+                  print('Selected Days in EditAlarm: $newSelectedDays');
+                },
 
-            initialSelectedTime: selectedTime,
-            initialSelectedDays:
-                widget.alarm.selectedDays, // Provide the initial selected days
-            isNewAlarm: false,
-            labelController: labelController,
-            initialLabel: widget.alarm.label ?? '', // Provide the initial label
-            initialColor: Color(widget.alarm.color),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: [
-              const SizedBox(
-                width: 20,
-              ),
-              const Text(
-                "Pick a Color",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                initialSelectedTime: selectedTime,
+                initialSelectedDays: widget
+                    .alarm.selectedDays, // Provide the initial selected days
+                isNewAlarm: false,
+                labelController: labelController,
+                initialLabel:
+                    widget.alarm.label ?? '', // Provide the initial label
+                initialColor: Color(widget.alarm.color),
               ),
               const SizedBox(
-                width: 20,
+                height: 20,
               ),
-              GestureDetector(
-                onTap: _openColorPickerDialog,
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: selectedColor,
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 20,
                   ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(
-                      255,
-                      8,
-                      35,
-                      56,
+                  const Text(
+                    "Pick a Color",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  GestureDetector(
+                    onTap: _openColorPickerDialog,
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: selectedColor,
+                      ),
                     ),
                   ),
-                  onPressed: () {
-                    saveChanges();
-                  },
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  )),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(
-                      255,
-                      8,
-                      35,
-                      56,
-                    ),
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: const Text(
-                            "Are you sure you want to delete the Alarm?",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                deleteAlarm();
-                              },
-                              child: const Text(
-                                "Yes",
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          8,
+                          35,
+                          56,
+                        ),
+                      ),
+                      onPressed: () {
+                        saveChanges();
+                      },
+                      child: const Text(
+                        "Save",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      )),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          8,
+                          35,
+                          56,
+                        ),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              content: const Text(
+                                "Are you sure you want to delete the Alarm?",
                                 style: TextStyle(
-                                  color: Color.fromARGB(
-                                    255,
-                                    8,
-                                    35,
-                                    56,
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    deleteAlarm();
+                                  },
+                                  child: const Text(
+                                    "Yes",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(
+                                        255,
+                                        8,
+                                        35,
+                                        56,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // Handle "No" button action
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                              child: const Text(
-                                "No",
-                                style: TextStyle(
-                                  color: Color.fromARGB(
-                                    255,
-                                    8,
-                                    35,
-                                    56,
+                                TextButton(
+                                  onPressed: () {
+                                    // Handle "No" button action
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                  },
+                                  child: const Text(
+                                    "No",
+                                    style: TextStyle(
+                                      color: Color.fromARGB(
+                                        255,
+                                        8,
+                                        35,
+                                        56,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
+                              ],
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                  child: const Text(
-                    "Delete",
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  )),
+                      child: const Text(
+                        "Delete",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      )),
+                ],
+              )
             ],
-          )
+          ),
         ],
       ),
     );
@@ -307,7 +314,7 @@ class _EditAlarmState extends State<EditAlarm> {
 
     // Update the object in Hive using its key
     await alarmBox.put(widget.alarm.key, widget.alarm);
-
+    scheduleNotification();
     // Once saved, you can navigate back to the previous screen
     Navigator.pushAndRemoveUntil(
       context,
@@ -316,5 +323,44 @@ class _EditAlarmState extends State<EditAlarm> {
               MyHomePage()), // Provide the builder for MyHomePage
       (route) => false,
     );
+  }
+
+  void scheduleNotification() {
+    print('Scheduling notification...');
+
+    // Check if selectedTime is not null
+    if (selectedTime != null) {
+      // Print the selected time and day
+      print('Selected Time: ${selectedTime!.hour}:${selectedTime!.minute}');
+      print('Selected Day of Week: ${selectedTime!.weekday}');
+
+      // Check if the selected day is in the list of selected days
+      if (selectedDays[selectedTime!.weekday - 1]) {
+        print('Selected Day of Week: ${selectedDays}');
+
+        // Use the user-selected time for scheduling the notification
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: 0,
+            channelKey: 'basic_channel',
+            title: '${labelController.text}',
+            body: 'It\'s time for your alarm!',
+          ),
+          schedule: NotificationCalendar(
+            weekday: selectedTime!.weekday,
+            hour: selectedTime!.hour,
+            minute: selectedTime!.minute,
+            second: selectedTime!.second,
+            millisecond: selectedTime!.millisecond,
+          ),
+        );
+      } else {
+        // Handle the case where the selected day is not in the list (optional)
+        print('Error: Selected day is not in the list of selected days.');
+      }
+    } else {
+      // Handle the case where selectedTime is null (optional)
+      print('Error: selectedTime is null. Cannot schedule the notification.');
+    }
   }
 }
