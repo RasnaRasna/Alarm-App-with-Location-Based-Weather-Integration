@@ -13,7 +13,7 @@
 
 
     <application
-        android:label="alarm_weather_app"
+        android:label="WeatherAlarm"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,7 +1,7 @@
 import 'package:alarm_weather_app/local_notification/notifcation_services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'date_picker.dart';
+import 'timedays/date_picker.dart';
 
 class CurvedBorderContainer extends StatefulWidget {
   final bool isNewAlarm;

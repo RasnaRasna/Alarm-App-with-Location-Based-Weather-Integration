@@ -1,6 +1,6 @@
 import 'package:alarm_weather_app/database/model_class.dart';
-import 'package:alarm_weather_app/widgets/days.dart';
-import 'package:alarm_weather_app/widgets/edit_alarm.dart';
+import 'package:alarm_weather_app/widgets/timedays/days.dart';
+import 'package:alarm_weather_app/widgets/editalarm/edit_alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

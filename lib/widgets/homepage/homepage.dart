@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:alarm_weather_app/database/model_class.dart';
 import 'package:alarm_weather_app/local_notification/notifcation_services.dart';
-import 'package:alarm_weather_app/widgets/add_Alarm.dart';
-import 'package:alarm_weather_app/widgets/alarm_list.dart';
+import 'package:alarm_weather_app/widgets/addalarm/add_Alarm.dart';
+import 'package:alarm_weather_app/widgets/homepage/alarm_list.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
-          'Weather App',
+          'WeatherAlarm',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -237,16 +237,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
                           const SizedBox(height: 20),
                           // Display H and its value
+
                           Text(
-                            'H: ${getHighTemperature()}',
+                            getHighTemperature().isNotEmpty
+                                ? 'H: ${getHighTemperature()}'
+                                : '',
                             style: TextStyle(
                               fontSize: 15,
                               color: Colors.white,
                             ),
                           ),
-                          // Display L and its value
+
                           Text(
-                            'L: ${getLowTemperature()}',
+                            getLowTemperature().isNotEmpty
+                                ? 'L: ${getLowTemperature()}'
+                                : 'No data available',
                             style: TextStyle(
                               fontSize: 15,
                               color: Colors.white,

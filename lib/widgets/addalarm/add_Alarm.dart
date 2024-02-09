@@ -1,7 +1,7 @@
 import 'package:alarm_weather_app/database/model_class.dart';
 import 'package:alarm_weather_app/local_notification/notifcation_services.dart';
 import 'package:alarm_weather_app/widgets/curverd_container.dart';
-import 'package:alarm_weather_app/widgets/homepage.dart';
+import 'package:alarm_weather_app/widgets/homepage/homepage.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';

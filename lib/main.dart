@@ -1,6 +1,6 @@
 import 'package:alarm_weather_app/database/model_class.dart';
 
-import 'package:alarm_weather_app/widgets/homepage.dart';
+import 'package:alarm_weather_app/widgets/homepage/homepage.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,28 +14,28 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox<Alarm>('alarms'); // Open a Hive box for storing alarms
 
-  AwesomeNotifications().initialize(
-    'resource://drawable/icon_notification',
-    [
-      NotificationChannel(
-        channelKey: 'basic_channel',
-        channelName: 'Basic notifications',
-        channelDescription: 'Notification channel for basic notifications',
-        defaultColor: Color(0xFF9D50DD),
-        ledColor: Colors.white,
-      ),
-    ],
-  );
+//   AwesomeNotifications().initialize(
+//     'resource://drawable/icon_notification',
+//     [
+//       NotificationChannel(
+//         channelKey: 'basic_channel',
+//         channelName: 'Basic notifications',
+//         channelDescription: 'Notification channel for basic notifications',
+//         defaultColor: Color(0xFF9D50DD),
+//         ledColor: Colors.white,
+//       ),
+//     ],
+//   );
 
-// Check and request notification permission
-  var notificationStatus = await Permission.notification.status;
-  print('Notification Permission Status: $notificationStatus');
+// // Check and request notification permission
+//   var notificationStatus = await Permission.notification.status;
+//   print('Notification Permission Status: $notificationStatus');
 
-  if (notificationStatus.isDenied || notificationStatus.isPermanentlyDenied) {
-    print('Requesting Notification Permission...');
+//   if (notificationStatus.isDenied || notificationStatus.isPermanentlyDenied) {
+//     print('Requesting Notification Permission...');
 
-    await Permission.notification.request();
-  }
+//     await Permission.notification.request();
+//   }
 
   // Check and request location permission
   var locationStatus = await Permission.location.status;
