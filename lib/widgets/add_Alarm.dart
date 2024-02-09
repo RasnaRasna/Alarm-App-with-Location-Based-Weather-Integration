@@ -177,22 +177,32 @@ class AddAlarmState extends State<AddAlarm> {
       // Print the selected time and day
       print('Selected Time: ${selectedTime!.hour}:${selectedTime!.minute}');
       print('Selected Day of Week: ${selectedTime!.weekday}');
-      // Use the user-selected time for scheduling the notification
-      AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: 0,
-          channelKey: 'basic_channel',
-          title: 'Alarm:${labelController.text}',
-          body: 'It\'s time for your alarm!',
-        ),
-        schedule: NotificationCalendar(
-          weekday: selectedTime!.weekday,
-          hour: selectedTime!.hour,
-          minute: selectedTime!.minute,
-          second: selectedTime!.second,
-          millisecond: selectedTime!.millisecond,
-        ),
-      );
+
+      // Check if the selected day is in the list of selected days
+      if (selectedDays[selectedTime!.weekday - 1]) {
+        print('Selected Day of Week: ${selectedDays}');
+
+        // Use the user-selected time for scheduling the notification
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: 0,
+            channelKey: 'basic_channel',
+            title: '${labelController.text}',
+            body: 'It\'s time for your alarm!',
+          ),
+          schedule: NotificationCalendar(
+            
+            weekday: selectedTime!.weekday,
+            hour: selectedTime!.hour,
+            minute: selectedTime!.minute,
+            second: selectedTime!.second,
+            millisecond: selectedTime!.millisecond,
+          ),
+        );
+      } else {
+        // Handle the case where the selected day is not in the list (optional)
+        print('Error: Selected day is not in the list of selected days.');
+      }
     } else {
       // Handle the case where selectedTime is null (optional)
       print('Error: selectedTime is null. Cannot schedule the notification.');
