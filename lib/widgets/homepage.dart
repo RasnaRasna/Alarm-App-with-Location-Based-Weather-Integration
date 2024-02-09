@@ -329,7 +329,6 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromARGB(255, 139, 167, 190),
         onPressed: () {
-          scheduleNotification();
           Navigator.push(
             context,
             MaterialPageRoute(builder: (ctx) => AddAlarm()),
@@ -339,28 +338,6 @@ class _MyHomePageState extends State<MyHomePage> {
           Icons.add,
           color: Colors.white,
         ),
-      ),
-    );
-  }
-
-  void scheduleNotification() {
-    print('Scheduling notification...');
-
-    DateTime scheduledTime = DateTime.now().add(Duration(minutes: 1));
-
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 0,
-        channelKey: 'basic_channel',
-        title: 'Scheduled Notification',
-        body: 'This is a scheduled notification awesome',
-      ),
-      schedule: NotificationCalendar(
-        weekday: 5,
-        hour: scheduledTime.hour,
-        minute: scheduledTime.minute,
-        second: scheduledTime.second,
-        millisecond: scheduledTime.millisecond,
       ),
     );
   }

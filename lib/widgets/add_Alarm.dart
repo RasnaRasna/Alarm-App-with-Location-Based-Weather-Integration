@@ -5,7 +5,6 @@ import 'package:alarm_weather_app/widgets/homepage.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 
 class AddAlarm extends StatefulWidget {
@@ -26,7 +25,6 @@ class AddAlarmState extends State<AddAlarm> {
     56,
   );
   TextEditingController labelController = TextEditingController();
-  // NotificationService notificationService = NotificationService();
   //
 
   @override
@@ -95,8 +93,8 @@ class AddAlarmState extends State<AddAlarm> {
                   ),
                 ),
                 onPressed: () {
-                  // scheduleNotification();
-                  // saveAlarm();
+                  scheduleNotification();
+                  saveAlarm();
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
@@ -116,8 +114,6 @@ class AddAlarmState extends State<AddAlarm> {
       ),
     );
   }
-
-  
 
   void _openColorPickerDialog() {
     showDialog(
@@ -171,6 +167,36 @@ class AddAlarmState extends State<AddAlarm> {
     // Retrieve the saved alarm from the database
     final retrievedAlarm = alarmBox.get(addedKey);
     print('Retrieved Alarm from the database: $retrievedAlarm');
+  }
+
+  void scheduleNotification() {
+    print('Scheduling notification...');
+
+    // Check if selectedTime is not null
+    if (selectedTime != null) {
+      // Print the selected time and day
+      print('Selected Time: ${selectedTime!.hour}:${selectedTime!.minute}');
+      print('Selected Day of Week: ${selectedTime!.weekday}');
+      // Use the user-selected time for scheduling the notification
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 0,
+          channelKey: 'basic_channel',
+          title: 'Alarm:${labelController.text}',
+          body: 'It\'s time for your alarm!',
+        ),
+        schedule: NotificationCalendar(
+          weekday: selectedTime!.weekday,
+          hour: selectedTime!.hour,
+          minute: selectedTime!.minute,
+          second: selectedTime!.second,
+          millisecond: selectedTime!.millisecond,
+        ),
+      );
+    } else {
+      // Handle the case where selectedTime is null (optional)
+      print('Error: selectedTime is null. Cannot schedule the notification.');
+    }
   }
 }
 
